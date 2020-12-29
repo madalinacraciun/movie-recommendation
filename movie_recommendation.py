@@ -10,6 +10,18 @@ df = pd.read_csv("IMDB_movies_big_dataset_clean.csv", low_memory=False, error_ba
 def get_title_from_id(id):
 	return df[df.id == id]["original_title"].values[0]
 
+def get_year_from_id(id):
+	return df[df.id == id]["year"].values[0]
+
+def get_genre_from_id(id):
+	return df[df.id == id]["genre"].values[0]
+
+def get_director_from_id(id):
+	return df[df.id == id]["director"].values[0]
+
+def get_actors_from_id(id):
+	return df[df.id == id]["actors"].values[0]
+
 def get_id_from_title(title):
 	return df[df.original_title == title]["id"].values[0]
 
@@ -31,7 +43,14 @@ def get_recommended_movies(movie):
 	final_list = []
 	i = 0
 	for element in sorted_similar_movies:
-		final_list.append(get_title_from_id(element[0]))
+		list_element = {
+			'title' : str(get_title_from_id(element[0])),
+			'year' : str(get_year_from_id(element[0])),
+			'genre' : get_genre_from_id(element[0]),
+			'director' : get_director_from_id(element[0]),
+			'actors' : get_actors_from_id(element[0])
+		}
+		final_list.append(list_element)
 		i=i+1
 		if i>30:
 			break

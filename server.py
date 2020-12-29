@@ -18,17 +18,15 @@ def index():
     return 'Hello world'
 
 # Preluare titluri filme dupa cuvant cheie
-@app.route('/search-movie', methods=['POST'])
+@app.route('/search-movie', methods=['GET'])
 def searchMovie():
-    data = request.get_json()
-    keyword = data["keyword"]
+    keyword = request.args.get('keyword')
     result = get_movies_by_keyword(keyword)
     return result
 
-@app.route('/recommended-movies', methods=['POST'])
+@app.route('/recommended-movies', methods=['GET'])
 def recommendedMovies():
-    data = request.get_json()
-    movie = data["movie"]
+    movie = request.args.get('movie')
     result = get_recommended_movies(movie)
     return result
 
