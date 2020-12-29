@@ -13,6 +13,12 @@ def get_id_from_title(title):
 def get_rating_from_id(id):
 	return df[df.id == id]["avg_vote"].values[0]
 
+# def get_movies_by_keyword(keyword):
+# 	df = pd.read_csv("IMDB_movies_big_dataset_clean.csv", low_memory=False, error_bad_lines=False)
+# 	movies_by_keyword = pd.DataFrame()
+# 	movies_by_keyword = df[df["original_title"].str.contains(keyword, regex=False)]
+# 	return movies_by_keyword
+
 # Se citeste fisierul CSV ce contine datele despre filme
 print("Introduceti titlul filmului si apasati ENTER: ")
 movie_user_likes = str(input())
@@ -22,6 +28,7 @@ start_time = time.time()
 t1 = time.time()
 df = pd.read_csv("IMDB_movies_big_dataset_clean.csv", low_memory=False, error_bad_lines=False)
 print("Fisierul CSV a fost citit ... (%.2f secunde)" % (time.time()-t1))
+
 
 # Se selecteaza caracteristicile ce vor fi luate in seama pentru a calcula scorul de similaritate
 t2 = time.time()
