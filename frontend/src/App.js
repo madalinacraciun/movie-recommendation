@@ -4,8 +4,11 @@ import SearchBar from "./SearchBar";
 import Movie from "./Movie";
 
 function App() {
-  const [data, setData] = useState([]);
+  const [searchedMovies, setSearchedMovies] = useState([]);
+  const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [isLoading, setLoading] = useState(false);
+  const [showRecommendedMovies, setShowRecommendedMovies]=useState(false)
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -13,42 +16,53 @@ function App() {
       `http://127.0.0.1:5000/search-movie?keyword=${searchText}`
     );
     const responseData = await response.json();
-    console.log(responseData);
-    setData(responseData);
+   setShowRecommendedMovies(false)
+    setSearchedMovies(responseData);
   };
+
   const handleSelectMovie = async (movieSelected) => {
+    setLoading(true);
     const response = await fetch(
-      `http://127.0.0.1:5000/recommended-movies?movie=${movieSelected}`,
-      {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors", // no-cors, *cors, same-origin
-      }
+      `http://127.0.0.1:5000/recommended-movies?movie=${movieSelected}`
     );
     const responseData = await response.json();
-    console.log(responseData);
+    setRecommendedMovies(responseData);
+    setShowRecommendedMovies(true)
+    setLoading(false);
   };
   return (
     <div className="container">
-      <h3>Movie recomander app</h3>
+      <h3>MovieMatch</h3>
 
       <SearchBar
         searchText={searchText}
         setSearchText={setSearchText}
         handleSearch={handleSearch}
       />
-      <Movie />
-
+      {isLoading?
+      <h2 className="text-center my-3">Please wait, we are searching the best movies for you...</h2>:
+      showRecommendedMovies?
+      (
+      <div className="d-flex flex-wrap">
+        {recommendedMovies.map(item=>(
+          <Movie key={item.title} info={item} />
+        ))}
+      </div>
+      ):(
       <div className="search-results">
-        {Object.keys(data).map((key) => (
+        {Object.keys(searchedMovies).map((key) => (
           <span
             key={key}
-            onClick={() => handleSelectMovie(data[key])}
+            onClick={() => handleSelectMovie(searchedMovies[key])}
             className="badge bg-primary m-2 p-2"
           >
-            {data[key]}
+            {searchedMovies[key]}
           </span>
         ))}
       </div>
+
+      )}
+
     </div>
   );
 }

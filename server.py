@@ -28,12 +28,8 @@ def searchMovie():
 @app.route('/recommended-movies', methods=['GET'])
 def recommendedMovies():
     movie = request.args.get('movie')
-    print("MOVIEEEEEEEEEEEEEEEEEEE")
-    print(movie)
     result = get_recommended_movies(movie)
-    print(movie)
     return result
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

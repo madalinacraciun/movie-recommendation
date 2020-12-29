@@ -43,18 +43,19 @@ def get_recommended_movies(movie):
 	final_list = []
 	i = 0
 	for element in sorted_similar_movies:
-		list_element = {
-			'title' : str(get_title_from_id(element[0])),
-			'year' : str(get_year_from_id(element[0])),
-			'genre' : get_genre_from_id(element[0]),
-			'director' : get_director_from_id(element[0]),
-			'actors' : get_actors_from_id(element[0])
-		}
-		final_list.append(list_element)
+		if i>0:
+			list_element = {
+				'title' : str(get_title_from_id(element[0])),
+				'year' : str(get_year_from_id(element[0])),
+				'genre' : get_genre_from_id(element[0]),
+				'director' : get_director_from_id(element[0]),
+				'actors' : get_actors_from_id(element[0])
+			}
+			final_list.append(list_element)
 		i=i+1
-		if i>30:
+		if i>20:
 			break
-
+	
 	return json.dumps(final_list)
 
 
