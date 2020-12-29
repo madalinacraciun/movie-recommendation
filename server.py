@@ -2,10 +2,11 @@ from flask import Flask, request, jsonify
 import json
 import pandas as pd
 import numpy as np
-
+from flask_cors import CORS
 from movie_recommendation import get_recommended_movies
 
 app = Flask(__name__)
+CORS(app)
 df = pd.read_csv("IMDB_movies_big_dataset_clean.csv", low_memory=False, error_bad_lines=False)
 
 def get_movies_by_keyword(keyword):
@@ -27,7 +28,10 @@ def searchMovie():
 @app.route('/recommended-movies', methods=['GET'])
 def recommendedMovies():
     movie = request.args.get('movie')
+    print("MOVIEEEEEEEEEEEEEEEEEEE")
+    print(movie)
     result = get_recommended_movies(movie)
+    print(movie)
     return result
 
 
