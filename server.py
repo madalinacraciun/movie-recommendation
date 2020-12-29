@@ -14,12 +14,17 @@ def get_movies_by_keyword(keyword):
 def index():
     return 'Hello world'
 
+# Preluare titluri filme dupa cuvant cheie
 @app.route('/search-movie', methods=['POST'])
 def searchMovie():
     data = request.get_json()
-    keyword = data["movie"]
+    keyword = data["keyword"]
     result = get_movies_by_keyword(keyword)
     return result
+
+@app.route('/recommended-movies', methods=['POST'])
+def recommendedMovies():
+    return 0
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
