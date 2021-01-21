@@ -4,6 +4,13 @@ import json
 import time
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.corpus import stopwords
+import re
+import string
+from nltk.stem import WordNetLemmatizer
+from nltk import word_tokenize
+from nltk.corpus import stopwords
 
 df = pd.read_csv("IMDB_movies_big_dataset_clean.csv", low_memory=False, error_bad_lines=False)
 
@@ -28,14 +35,39 @@ def get_id_from_title(title):
 def get_rating_from_id(id):
 	return df[df.id == id]["avg_vote"].values[0]
 
+
+stop = stopwords.words('english')
+stop_words_ = set(stopwords.words('english'))
+wn = WordNetLemmatizer() 
+
+def black_txt(token): #scoate punctuatia si cuvintele nefolositoare 
+    return  token not in stop_words_ and token not in list(string.punctuation)  and len(token)>2   
+  
+def clean_txt(text):
+  clean_text = []
+  clean_text2 = []
+  text = re.sub("'", "",text)
+  text=re.sub("(\\d|\\W)+"," ",text) 
+  text = text.replace("nbsp", "")
+  clean_text = [ wn.lemmatize(word, pos="v") for word in word_tokenize(text.lower()) if black_txt(word)]
+  clean_text2 = [word for word in clean_text if black_txt(word)]
+  return " ".join(clean_text2)
+
+
 def get_recommended_movies(movie):
-	features = ['original_title','description','actors','genre','director']
-	for feature in features:
-		df[feature] = df[feature].fillna('')
-	df["combined_features"] = df.apply(combine_features,axis=1)
-	cv = CountVectorizer()
-	count_matrix = cv.fit_transform(df["combined_features"])
-	cosine_sim = cosine_similarity(count_matrix)
+	# features = ['original_title','description','actors','genre','director']
+	# for feature in features:
+	# 	df[feature] = df[feature].fillna('')
+	# df["combined_features"] = df.apply(combine_features,axis=1)
+	# df["combined_features"] = df["combined_features"].apply(clean_txt)
+	# tfidf_vectorizer = TfidfVectorizer()
+	# tfidf_matrix = tfidf_vectorizer.fit_transform((df['combined_features']))
+
+	# cv = CountVectorizer()
+	# count_matrix = cv.fit_transform(df["combined_features"])
+	# cosine_sim = cosine_similarity(tfidf_matrix)
+	# np.save('cosine_matrix.npy',cosine_sim)
+	cosine_sim=np.load('cosine_matrix.npy',allow_pickle=True)
 	movie_index = get_id_from_title(movie)
 	similar_movies =  list(enumerate(cosine_sim[movie_index]))
 	sorted_similar_movies = sorted(similar_movies,key=lambda x:x[1],reverse=True)
@@ -49,7 +81,8 @@ def get_recommended_movies(movie):
 				'year' : str(get_year_from_id(element[0])),
 				'genre' : get_genre_from_id(element[0]),
 				'director' : get_director_from_id(element[0]),
-				'actors' : get_actors_from_id(element[0])
+				'actors' : get_actors_from_id(element[0]),
+				'rating' : get_rating_from_id(element[0])
 			}
 			final_list.append(list_element)
 		i=i+1
